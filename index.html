@@ -107,7 +107,7 @@
         <div class="field"><label>Prénom du gérant</label><input type="text" id="e-gerant-prenom" placeholder="Prénom" /></div>
       </div>
       <div class="field"><label>Numéro SIRET</label><input type="text" id="e-siret" placeholder="14 chiffres" maxlength="17" /></div>
-      <div class="field"><label>Numéro WhatsApp</label><input type="tel" id="e-tel" placeholder="06 XX XX XX XX" /></div>
+      <div class="field"><label>Numéro WhatsApp (avec indicatif pays)</label><input type="tel" id="e-tel" placeholder="+33 6 XX XX XX XX" /></div>
       <div class="field"><label>Adresse e-mail</label><input type="email" id="e-mail" placeholder="contact@entreprise.fr" /></div>
       <button class="btn" onclick="validerEntreprise()">Valider les infos entreprise →</button>
     </div>
@@ -123,7 +123,7 @@
       </div>
       <div class="field"><label>Date de naissance</label><input type="date" id="a-dob" /></div>
       <div class="field"><label>Adresse e-mail</label><input type="email" id="a-mail" placeholder="prenom@mail.fr" /></div>
-      <div class="field"><label>Numéro WhatsApp</label><input type="tel" id="a-tel" placeholder="06 XX XX XX XX" /></div>
+      <div class="field"><label>Numéro WhatsApp (avec indicatif pays)</label><input type="tel" id="a-tel" placeholder="+33 6 XX XX XX XX" /></div>
       <div class="field">
         <label>Niveau d'étude actuel</label>
         <div class="select-wrap">
@@ -180,6 +180,39 @@
     </div>
     <div class="actions-row">
       <button class="btn" onclick="envoyerDossier()">📤 Envoyer au centre de formation</button>
+      <button class="btn btn-secondary" onclick="nouveauDossier()">+ Nouveau dossier</button>
+    </div>
+  </div>
+</div>
+  <div class="summary" id="confirmation">
+    <div class="card" style="text-align:center;">
+      <div style="font-size:48px;margin-bottom:16px;">✅</div>
+      <div class="card-title" style="font-size:22px;margin-bottom:12px;">Dossier envoyé avec succès !</div>
+      <p class="card-desc" style="font-size:14px;margin-bottom:0;">Un email récapitulatif a été envoyé au centre de formation, au patron et à l'apprenti(e).</p>
+    </div>
+    <div class="card">
+      <div class="card-title">🎓 Prochaines étapes pour l'apprenti(e)</div>
+      <div style="margin-top:16px;font-size:14px;line-height:1.8;color:var(--text);">
+        <strong>1.</strong> Préparez les documents suivants :<br>
+        &nbsp;&nbsp;&nbsp;• Pièce d'identité (recto/verso)<br>
+        &nbsp;&nbsp;&nbsp;• Attestation de sécurité sociale<br>
+        &nbsp;&nbsp;&nbsp;• CV<br>
+        &nbsp;&nbsp;&nbsp;• Lettre de motivation<br><br>
+        <strong>2.</strong> Attendez un mail du centre de formation avec un formulaire à remplir<br><br>
+        <strong>3.</strong> Vous recevrez ensuite le contrat à remplir et à signer (par vous-même et par votre tuteur si mineur)
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">🏢 Prochaines étapes pour le patron</div>
+      <div style="margin-top:16px;font-size:14px;line-height:1.8;color:var(--text);">
+        <strong>1.</strong> Préparez votre CV<br><br>
+        <strong>2.</strong> Attendez un mail du centre de formation avec un formulaire à remplir<br><br>
+        <strong>3.</strong> Pour toute question (URSSAF, aide à l'embauche, etc.), contactez le centre de formation :<br>
+        &nbsp;&nbsp;&nbsp;📧 <a href="mailto:contact@skillz-academy.com" style="color:var(--accent);">contact@skillz-academy.com</a><br>
+        &nbsp;&nbsp;&nbsp;📞 <a href="tel:+33783617228" style="color:var(--accent);">+33 7 83 61 72 28</a>
+      </div>
+    </div>
+    <div class="actions-row">
       <button class="btn btn-secondary" onclick="nouveauDossier()">+ Nouveau dossier</button>
     </div>
   </div>
@@ -279,7 +312,8 @@
     var btn = document.querySelector('.actions-row .btn');
     btn.textContent = '⏳ Envoi en cours...';
     btn.disabled = true;
-    emailjs.send('service_79nes2c', 'v3kfrkl', {
+
+    var données = {
       ref: document.getElementById('s-ref').textContent,
       date: document.getElementById('s-date').textContent,
       apporteur: document.getElementById('s-apporteur').textContent,
@@ -294,14 +328,36 @@
       a_mail: document.getElementById('s-a-mail').textContent,
       a_niveau: document.getElementById('s-a-niveau').textContent,
       a_formation: document.getElementById('s-a-formation').textContent
-    }).then(function() {
+    };
+
+    // 1. Mail au centre de formation
+    var mailCentre = emailjs.send('service_79nes2c', 'v3kfrkl', Object.assign({}, données, {
+      to_email: 'contact@skillz-academy.com',
+      message: 'Nouveau dossier apprentissage transmis par ' + données.apporteur + '.\n\nENTREPRISE\nEntreprise : ' + données.entreprise + '\nGérant : ' + données.gerant + '\nSIRET : ' + données.siret + '\nWhatsApp : ' + données.e_tel + '\nMail : ' + données.e_mail + '\n\nAPPRENTI(E)\nNom : ' + données.apprenti + '\nNaissance : ' + données.a_dob + '\nWhatsApp : ' + données.a_tel + '\nMail : ' + données.a_mail + '\nNiveau : ' + données.a_niveau + '\nFormation : ' + données.a_formation
+    }));
+
+    // 2. Mail au patron
+    var mailPatron = emailjs.send('service_79nes2c', 'v3kfrkl', Object.assign({}, données, {
+      to_email: données.e_mail,
+      message: 'Bonjour ' + données.gerant + ',\n\nMerci d\'avoir rempli le formulaire d\'inscription en apprentissage.\n\nVoici les prochaines étapes :\n\n1. Préparez votre CV\n2. Attendez un mail du centre de formation Skillz Academy avec un formulaire à remplir\n3. Pour toute question concernant l\'URSSAF, les aides à l\'embauche ou autre, contactez le centre de formation :\n   - Email : contact@skillz-academy.com\n   - Téléphone : +33 7 83 61 72 28\n\nCordialement,\nSkillz Academy'
+    }));
+
+    // 3. Mail à l'apprenti
+    var mailApprenti = emailjs.send('service_79nes2c', 'v3kfrkl', Object.assign({}, données, {
+      to_email: données.a_mail,
+      message: 'Bonjour ' + données.apprenti + ',\n\nMerci d\'avoir rempli le formulaire d\'inscription en apprentissage.\n\nVoici les prochaines étapes :\n\n1. Préparez les documents suivants :\n   - Pièce d\'identité (recto/verso)\n   - Attestation de sécurité sociale\n   - CV\n   - Lettre de motivation\n\n2. Attendez un mail du centre de formation Skillz Academy avec un formulaire à remplir\n\n3. Vous recevrez ensuite le contrat à remplir et à signer (par vous-même et par votre tuteur si vous êtes mineur)\n\nPour toute question, contactez le centre de formation :\n   - Email : contact@skillz-academy.com\n   - Téléphone : +33 7 83 61 72 28\n\nCordialement,\nSkillz Academy'
+    }));
+
+    Promise.all([mailCentre, mailPatron, mailApprenti]).then(function() {
       btn.textContent = '✅ Envoyé !';
-      showToast('Dossier envoyé sur ton mail !');
-      setTimeout(function() { btn.textContent = '📤 Envoyer au centre de formation'; btn.disabled = false; }, 3000);
+      // Afficher la page de confirmation
+      document.getElementById('summary').classList.remove('show');
+      document.getElementById('confirmation').classList.add('show');
+      showToast('Dossier envoyé au centre, au patron et à l\'apprenti !');
     }, function(err) {
       btn.textContent = '📤 Envoyer au centre de formation';
       btn.disabled = false;
-      showToast('Erreur : ' + err.text, '#e07d2a');
+      showToast('Erreur : ' + (err.text || err), '#e07d2a');
     });
   }
 
