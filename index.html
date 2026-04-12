@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inscription Apprentissage</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #ffffff;
+    --surface: #f3f3f3;
+    --surface2: #eee;
+    --border: #ddd;
+    --accent: #2ea3f2;
+    --accent2: #1a8ad4;
+    --text: #333;
+    --muted: #666;
+    --success: #2ea3f2;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px; min-height: 100vh; }
+  body::before { content: ''; position: fixed; top: -200px; right: -200px; width: 600px; height: 600px; background: radial-gradient(circle, rgba(46,163,242,0.07) 0%, transparent 70%); pointer-events: none; z-index: 0; }
+  .container { max-width: 680px; margin: 0 auto; padding: 48px 24px 80px; position: relative; z-index: 1; }
+  .header { text-align: center; margin-bottom: 40px; }
+  .badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(46,163,242,0.12); border: 1px solid rgba(46,163,242,0.3); color: var(--accent); font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 6px 14px; border-radius: 100px; margin-bottom: 20px; }
+  .badge::before { content: ''; width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.7); } }
+  h1 { font-family: 'Syne', sans-serif; font-size: clamp(28px, 6vw, 42px); font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 14px; }
+  h1 span { background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .subtitle { color: var(--muted); font-size: 15px; line-height: 1.6; max-width: 480px; margin: 0 auto; font-weight: 300; }
+  .ref-badge { display: flex; align-items: center; justify-content: center; margin-bottom: 28px; }
+  .ref-pill { background: var(--surface2); border: 1px solid var(--border); border-radius: 100px; padding: 8px 18px; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600; color: var(--muted); letter-spacing: 0.06em; }
+  .ref-pill span { color: var(--success); }
+  .tabs { display: flex; background: var(--surface); border-radius: var(--radius); padding: 5px; margin-bottom: 28px; border: 1px solid var(--border); }
+  .tab { flex: 1; padding: 12px 20px; border-radius: 10px; border: none; background: transparent; color: var(--muted); font-family: 'Syne', sans-serif; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.25s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .tab.active { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; }
+  .tab.done { color: var(--success); }
+  .tab:hover:not(.active) { color: var(--text); background: var(--surface2); }
+  .panel { display: none; }
+  .panel.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; margin-bottom: 16px; }
+  .card-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+  .card-desc { color: var(--muted); font-size: 13px; margin-bottom: 28px; font-weight: 300; }
+  .field { margin-bottom: 20px; }
+  label { display: block; font-size: 12px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  input, select { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 13px 16px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px; outline: none; transition: border-color 0.2s, box-shadow 0.2s; -webkit-appearance: none; }
+  input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(240,180,41,0.12); }
+  input::placeholder { color: #3e4557; }
+  select option { background: var(--surface2); color: var(--text); }
+  .select-wrap { position: relative; }
+  .select-wrap::after { content: '▾'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; font-size: 12px; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 480px) { .field-row { grid-template-columns: 1fr; } .card { padding: 24px 20px; } }
+  .hint { display: flex; align-items: center; gap: 8px; background: rgba(46,163,242,0.08); border: 1px solid rgba(46,163,242,0.2); border-radius: 10px; padding: 12px 16px; color: var(--accent); font-size: 13px; margin-bottom: 24px; }
+  .btn { width: 100%; background: linear-gradient(135deg, var(--accent), var(--accent2)); border: none; border-radius: 12px; padding: 16px; color: #fff; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px; cursor: pointer; transition: opacity 0.2s, transform 0.15s; margin-top: 8px; }
+  .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn:active { transform: translateY(0); }
+  .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); margin-top: 10px; }
+  .summary { display: none; animation: fadeIn 0.4s ease; }
+  .summary.show { display: block; }
+  .duo-card { background: linear-gradient(135deg, rgba(46,163,242,0.08), rgba(26,138,212,0.05)); border: 1px solid rgba(46,163,242,0.25); border-radius: var(--radius); padding: 20px 24px; margin-bottom: 20px; text-align: center; }
+  .duo-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 10px; }
+  .duo-text { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: var(--text); line-height: 1.5; }
+  .duo-text span { color: var(--accent); }
+  .summary-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; margin-bottom: 16px; }
+  .summary-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .summary-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 16px; }
+  .summary-section { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+  .summary-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .summary-label-small { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+  .summary-row { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 8px; font-size: 14px; }
+  .summary-row .key { color: var(--muted); min-width: 130px; font-weight: 300; }
+  .summary-row .val { color: var(--text); font-weight: 500; text-align: right; }
+  .copy-btn { display: flex; align-items: center; gap: 8px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 8px 14px; color: var(--text); font-size: 13px; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all 0.2s; }
+  .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .actions-row { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+  .toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--success); color: #0d0f14; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; padding: 14px 28px; border-radius: 100px; transition: transform 0.3s ease; z-index: 999; white-space: nowrap; }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>emailjs.init('fOwyzvPoym10Cl5wB');</script>
+<input type="hidden" id="apporteur" value="Afifa El Moukafih" />
+<div class="container">
+  <div class="header">
+    <div class="badge">Inscription apprentissage</div>
+    <h1>Prêts à<br><span>démarrer ensemble ?</span></h1>
+    <p class="subtitle">Chaque partie remplit sa section. Le récapitulatif est ensuite envoyé automatiquement.</p>
+  </div>
+  <div class="ref-badge">
+    <div class="ref-pill">Dossier <span id="ref-display">#---</span></div>
+  </div>
+  <div class="tabs" id="tabs">
+    <button class="tab active" id="tab-e" onclick="switchTab('entreprise')">🏢 Entreprise</button>
+    <button class="tab" id="tab-a" onclick="switchTab('apprenti')">🎓 Apprenti(e)</button>
+  </div>
+  <div class="panel active" id="panel-entreprise">
+    <div class="card">
+      <div class="card-title">🏢 Informations entreprise</div>
+      <p class="card-desc">À remplir par le gérant ou représentant de l'entreprise.</p>
+      <div class="field"><label>Nom de l'entreprise</label><input type="text" id="e-nom" placeholder="Ex : Menuiserie Dupont" /></div>
+      <div class="field-row">
+        <div class="field"><label>Nom du gérant</label><input type="text" id="e-gerant-nom" placeholder="Nom" /></div>
+        <div class="field"><label>Prénom du gérant</label><input type="text" id="e-gerant-prenom" placeholder="Prénom" /></div>
+      </div>
+      <div class="field"><label>Numéro SIRET</label><input type="text" id="e-siret" placeholder="14 chiffres" maxlength="17" /></div>
+      <div class="field"><label>Numéro WhatsApp</label><input type="tel" id="e-tel" placeholder="06 XX XX XX XX" /></div>
+      <div class="field"><label>Adresse e-mail</label><input type="email" id="e-mail" placeholder="contact@entreprise.fr" /></div>
+      <button class="btn" onclick="validerEntreprise()">Valider les infos entreprise →</button>
+    </div>
+  </div>
+  <div class="panel" id="panel-apprenti">
+    <div class="hint">✅ Entreprise enregistrée ! À toi maintenant.</div>
+    <div class="card">
+      <div class="card-title">🎓 Informations apprenti(e)</div>
+      <p class="card-desc">À remplir par le ou la futur(e) apprenti(e).</p>
+      <div class="field-row">
+        <div class="field"><label>Nom</label><input type="text" id="a-nom" placeholder="Nom" /></div>
+        <div class="field"><label>Prénom</label><input type="text" id="a-prenom" placeholder="Prénom" /></div>
+      </div>
+      <div class="field"><label>Date de naissance</label><input type="date" id="a-dob" /></div>
+      <div class="field"><label>Adresse e-mail</label><input type="email" id="a-mail" placeholder="prenom@mail.fr" /></div>
+      <div class="field"><label>Numéro WhatsApp</label><input type="tel" id="a-tel" placeholder="06 XX XX XX XX" /></div>
+      <div class="field">
+        <label>Niveau d'étude actuel</label>
+        <div class="select-wrap">
+          <select id="a-niveau">
+            <option value="">Sélectionner...</option>
+            <option value="3ème (Brevet)">3ème (Brevet)</option>
+            <option value="2nde">2nde</option>
+            <option value="1ère">1ère</option>
+            <option value="Terminale (Bac)">Terminale (Bac)</option>
+            <option value="Bac+1">Bac+1</option>
+            <option value="Bac+2">Bac+2</option>
+            <option value="Bac+3">Bac+3</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>Formation choisie</label><input type="text" id="a-formation" placeholder="Ex : CAP Électricien, BTS Commerce..." /></div>
+      <button class="btn" onclick="validerApprenti()">Voir le récapitulatif →</button>
+      <button class="btn btn-secondary" onclick="switchTab('entreprise')">← Modifier entreprise</button>
+    </div>
+  </div>
+  <div class="summary" id="summary">
+    <div class="duo-card">
+      <div class="duo-label">📌 Résumé du duo</div>
+      <div class="duo-text" id="duo-text">—</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-header">
+        <div class="summary-title">📋 Récapitulatif complet</div>
+        <button class="copy-btn" onclick="copierResume()">📋 Copier</button>
+      </div>
+      <div class="summary-section">
+        <div class="summary-label-small">📁 Dossier</div>
+        <div class="summary-row"><span class="key">Référence</span><span class="val" id="s-ref">—</span></div>
+        <div class="summary-row"><span class="key">Apporteur</span><span class="val" id="s-apporteur">—</span></div>
+        <div class="summary-row"><span class="key">Date</span><span class="val" id="s-date">—</span></div>
+      </div>
+      <div class="summary-section">
+        <div class="summary-label-small">🏢 Entreprise</div>
+        <div class="summary-row"><span class="key">Entreprise</span><span class="val" id="s-e-nom">—</span></div>
+        <div class="summary-row"><span class="key">Gérant</span><span class="val" id="s-e-gerant">—</span></div>
+        <div class="summary-row"><span class="key">SIRET</span><span class="val" id="s-e-siret">—</span></div>
+        <div class="summary-row"><span class="key">WhatsApp</span><span class="val" id="s-e-tel">—</span></div>
+        <div class="summary-row"><span class="key">Mail</span><span class="val" id="s-e-mail">—</span></div>
+      </div>
+      <div class="summary-section">
+        <div class="summary-label-small">🎓 Apprenti(e)</div>
+        <div class="summary-row"><span class="key">Nom complet</span><span class="val" id="s-a-nom">—</span></div>
+        <div class="summary-row"><span class="key">Date de naissance</span><span class="val" id="s-a-dob">—</span></div>
+        <div class="summary-row"><span class="key">WhatsApp</span><span class="val" id="s-a-tel">—</span></div>
+        <div class="summary-row"><span class="key">Mail</span><span class="val" id="s-a-mail">—</span></div>
+        <div class="summary-row"><span class="key">Niveau d'étude</span><span class="val" id="s-a-niveau">—</span></div>
+        <div class="summary-row"><span class="key">Formation</span><span class="val" id="s-a-formation">—</span></div>
+      </div>
+    </div>
+    <div class="actions-row">
+      <button class="btn" onclick="envoyerDossier()">📤 Envoyer au centre de formation</button>
+      <button class="btn btn-secondary" onclick="nouveauDossier()">+ Nouveau dossier</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+  function genRef() { var now = new Date(); return '#' + now.getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000); }
+  var currentRef = genRef();
+  document.getElementById('ref-display').textContent = currentRef;
+  var entrepriseDone = false;
+
+  function switchTab(tab) {
+    document.getElementById('panel-entreprise').classList.toggle('active', tab === 'entreprise');
+    document.getElementById('panel-apprenti').classList.toggle('active', tab === 'apprenti');
+    document.getElementById('tab-e').classList.toggle('active', tab === 'entreprise');
+    document.getElementById('tab-a').classList.toggle('active', tab === 'apprenti');
+    document.getElementById('summary').classList.remove('show');
+  }
+
+  function validerEntreprise() {
+    var ids = ['e-nom','e-gerant-nom','e-gerant-prenom','e-siret','e-tel','e-mail'];
+    for (var i = 0; i < ids.length; i++) { if (!document.getElementById(ids[i]).value.trim()) { showToast('Merci de remplir tous les champs', '#e07d2a'); return; } }
+    entrepriseDone = true;
+    document.getElementById('tab-e').classList.add('done');
+    switchTab('apprenti');
+  }
+
+  function validerApprenti() {
+    if (!entrepriseDone) { switchTab('entreprise'); return; }
+    var ids = ['a-nom','a-prenom','a-dob','a-mail','a-tel','a-niveau','a-formation'];
+    for (var i = 0; i < ids.length; i++) { if (!document.getElementById(ids[i]).value.trim()) { showToast('Merci de remplir tous les champs', '#e07d2a'); return; } }
+    afficherRecap();
+  }
+
+  function afficherRecap() {
+    var apporteur = document.getElementById('apporteur').value;
+    var eNom = document.getElementById('e-nom').value.trim();
+    var eGerant = document.getElementById('e-gerant-prenom').value.trim() + ' ' + document.getElementById('e-gerant-nom').value.trim();
+    var eSiret = document.getElementById('e-siret').value.trim();
+    var eTel = document.getElementById('e-tel').value.trim();
+    var eMail = document.getElementById('e-mail').value.trim();
+    var aNom = document.getElementById('a-prenom').value.trim() + ' ' + document.getElementById('a-nom').value.trim();
+    var aDob = formatDate(document.getElementById('a-dob').value);
+    var aTel = document.getElementById('a-tel').value.trim();
+    var aMail = document.getElementById('a-mail').value.trim();
+    var aNiveau = document.getElementById('a-niveau').value;
+    var aFormation = document.getElementById('a-formation').value.trim();
+    var now = new Date();
+    var dateStr = now.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
+
+    document.getElementById('duo-text').innerHTML = '<span>' + eGerant + '</span> (' + eNom + ')<br>recrute <span>' + aNom + '</span> en <span>' + aFormation + '</span>';
+    document.getElementById('s-ref').textContent = currentRef;
+    document.getElementById('s-apporteur').textContent = apporteur;
+    document.getElementById('s-date').textContent = dateStr;
+    document.getElementById('s-e-nom').textContent = eNom;
+    document.getElementById('s-e-gerant').textContent = eGerant;
+    document.getElementById('s-e-siret').textContent = eSiret;
+    document.getElementById('s-e-tel').textContent = eTel;
+    document.getElementById('s-e-mail').textContent = eMail;
+    document.getElementById('s-a-nom').textContent = aNom;
+    document.getElementById('s-a-dob').textContent = aDob;
+    document.getElementById('s-a-tel').textContent = aTel;
+    document.getElementById('s-a-mail').textContent = aMail;
+    document.getElementById('s-a-niveau').textContent = aNiveau;
+    document.getElementById('s-a-formation').textContent = aFormation;
+
+    document.getElementById('tabs').style.display = 'none';
+    document.getElementById('panel-apprenti').classList.remove('active');
+    document.getElementById('summary').classList.add('show');
+  }
+
+  function formatDate(d) { if (!d) return '—'; var p = d.split('-'); return p[2] + '/' + p[1] + '/' + p[0]; }
+
+  function copierResume() {
+    var duo = document.getElementById('duo-text').innerText.replace(/\n/g, ' ');
+    var t = 'DOSSIER ' + document.getElementById('s-ref').textContent + '\n' +
+      'Date : ' + document.getElementById('s-date').textContent + '\n' +
+      'Apporteur : ' + document.getElementById('s-apporteur').textContent + '\n\n' +
+      'RESUME : ' + duo + '\n\n' +
+      'ENTREPRISE\n' +
+      'Entreprise : ' + document.getElementById('s-e-nom').textContent + '\n' +
+      'Gerant : ' + document.getElementById('s-e-gerant').textContent + '\n' +
+      'SIRET : ' + document.getElementById('s-e-siret').textContent + '\n' +
+      'WhatsApp : ' + document.getElementById('s-e-tel').textContent + '\n' +
+      'Mail : ' + document.getElementById('s-e-mail').textContent + '\n\n' +
+      'APPRENTI(E)\n' +
+      'Nom : ' + document.getElementById('s-a-nom').textContent + '\n' +
+      'Naissance : ' + document.getElementById('s-a-dob').textContent + '\n' +
+      'WhatsApp : ' + document.getElementById('s-a-tel').textContent + '\n' +
+      'Mail : ' + document.getElementById('s-a-mail').textContent + '\n' +
+      'Niveau : ' + document.getElementById('s-a-niveau').textContent + '\n' +
+      'Formation : ' + document.getElementById('s-a-formation').textContent;
+    navigator.clipboard.writeText(t).then(function() { showToast('Copie !'); });
+  }
+
+  function envoyerDossier() {
+    var btn = document.querySelector('.actions-row .btn');
+    btn.textContent = '⏳ Envoi en cours...';
+    btn.disabled = true;
+    emailjs.send('service_79nes2c', 'v3kfrkl', {
+      ref: document.getElementById('s-ref').textContent,
+      date: document.getElementById('s-date').textContent,
+      apporteur: document.getElementById('s-apporteur').textContent,
+      entreprise: document.getElementById('s-e-nom').textContent,
+      gerant: document.getElementById('s-e-gerant').textContent,
+      siret: document.getElementById('s-e-siret').textContent,
+      e_tel: document.getElementById('s-e-tel').textContent,
+      e_mail: document.getElementById('s-e-mail').textContent,
+      apprenti: document.getElementById('s-a-nom').textContent,
+      a_dob: document.getElementById('s-a-dob').textContent,
+      a_tel: document.getElementById('s-a-tel').textContent,
+      a_mail: document.getElementById('s-a-mail').textContent,
+      a_niveau: document.getElementById('s-a-niveau').textContent,
+      a_formation: document.getElementById('s-a-formation').textContent
+    }).then(function() {
+      btn.textContent = '✅ Envoyé !';
+      showToast('Dossier envoyé sur ton mail !');
+      setTimeout(function() { btn.textContent = '📤 Envoyer au centre de formation'; btn.disabled = false; }, 3000);
+    }, function(err) {
+      btn.textContent = '📤 Envoyer au centre de formation';
+      btn.disabled = false;
+      showToast('Erreur : ' + err.text, '#e07d2a');
+    });
+  }
+
+  function nouveauDossier() {
+    document.querySelectorAll('input[type=text], input[type=email], input[type=tel], input[type=date]').forEach(function(i) { i.value = ''; });
+    document.querySelectorAll('select').forEach(function(s) { s.value = ''; });
+    entrepriseDone = false;
+    currentRef = genRef();
+    document.getElementById('ref-display').textContent = currentRef;
+    document.getElementById('tabs').style.display = 'flex';
+    document.getElementById('tab-e').classList.remove('done');
+    document.getElementById('summary').classList.remove('show');
+    switchTab('entreprise');
+  }
+
+  function showToast(msg, color) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.background = color || 'var(--success)';
+    t.classList.add('show');
+    setTimeout(function() { t.classList.remove('show'); }, 2500);
+  }
+</script>
+</body>
+</html>
