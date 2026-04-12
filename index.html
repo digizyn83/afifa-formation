@@ -32,22 +32,15 @@
   .ref-badge { display: flex; align-items: center; justify-content: center; margin-bottom: 28px; }
   .ref-pill { background: var(--surface2); border: 1px solid var(--border); border-radius: 100px; padding: 8px 18px; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600; color: var(--muted); letter-spacing: 0.06em; }
   .ref-pill span { color: var(--success); }
-  .tabs { display: flex; background: var(--surface); border-radius: var(--radius); padding: 5px; margin-bottom: 28px; border: 1px solid var(--border); }
-  .tab { flex: 1; padding: 12px 20px; border-radius: 10px; border: none; background: transparent; color: var(--muted); font-family: 'Syne', sans-serif; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.25s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
-  .tab.active { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; }
-  .tab.done { color: var(--success); }
-  .tab:hover:not(.active) { color: var(--text); background: var(--surface2); }
-  .panel { display: none; }
-  .panel.active { display: block; animation: fadeIn 0.3s ease; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
   .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; margin-bottom: 16px; }
   .card-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; margin-bottom: 6px; }
   .card-desc { color: var(--muted); font-size: 13px; margin-bottom: 28px; font-weight: 300; }
   .field { margin-bottom: 20px; }
   label { display: block; font-size: 12px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
   input, select { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 13px 16px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px; outline: none; transition: border-color 0.2s, box-shadow 0.2s; -webkit-appearance: none; }
-  input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(240,180,41,0.12); }
-  input::placeholder { color: #3e4557; }
+  input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(46,163,242,0.12); }
+  input::placeholder { color: #999; }
+  input:disabled { background: #e8e8e8; color: #888; }
   select option { background: var(--surface2); color: var(--text); }
   .select-wrap { position: relative; }
   .select-wrap::after { content: '▾'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; font-size: 12px; }
@@ -58,12 +51,21 @@
   .btn:hover { opacity: 0.9; transform: translateY(-1px); }
   .btn:active { transform: translateY(0); }
   .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); margin-top: 10px; }
-  .summary { display: none; animation: fadeIn 0.4s ease; }
-  .summary.show { display: block; }
-  .duo-card { background: linear-gradient(135deg, rgba(46,163,242,0.08), rgba(26,138,212,0.05)); border: 1px solid rgba(46,163,242,0.25); border-radius: var(--radius); padding: 20px 24px; margin-bottom: 20px; text-align: center; }
-  .duo-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 10px; }
-  .duo-text { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: var(--text); line-height: 1.5; }
-  .duo-text span { color: var(--accent); }
+  .btn-whatsapp { background: #25d366; margin-top: 10px; }
+  .section { display: none; }
+  .section.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
+  .choice-card { background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius); padding: 32px 20px; text-align: center; cursor: pointer; transition: all 0.2s; }
+  .choice-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .choice-icon { font-size: 40px; margin-bottom: 12px; }
+  .choice-label { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 16px; }
+  .choice-desc { color: var(--muted); font-size: 13px; margin-top: 8px; }
+  .link-box { background: var(--surface2); border: 2px dashed var(--accent); border-radius: 10px; padding: 16px; margin: 20px 0; word-break: break-all; font-size: 13px; color: var(--accent); font-weight: 500; }
+  .locked-info { background: rgba(46,163,242,0.05); border: 1px solid rgba(46,163,242,0.2); border-radius: var(--radius); padding: 20px; margin-bottom: 20px; }
+  .locked-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
+  .locked-row .lk { color: var(--muted); }
+  .locked-row .lv { font-weight: 500; }
   .summary-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; margin-bottom: 16px; }
   .summary-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
   .summary-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 16px; }
@@ -73,10 +75,14 @@
   .summary-row { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 8px; font-size: 14px; }
   .summary-row .key { color: var(--muted); min-width: 130px; font-weight: 300; }
   .summary-row .val { color: var(--text); font-weight: 500; text-align: right; }
+  .duo-card { background: linear-gradient(135deg, rgba(46,163,242,0.08), rgba(26,138,212,0.05)); border: 1px solid rgba(46,163,242,0.25); border-radius: var(--radius); padding: 20px 24px; margin-bottom: 20px; text-align: center; }
+  .duo-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 10px; }
+  .duo-text { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: var(--text); line-height: 1.5; }
+  .duo-text span { color: var(--accent); }
+  .actions-row { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
   .copy-btn { display: flex; align-items: center; gap: 8px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 8px 14px; color: var(--text); font-size: 13px; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all 0.2s; }
   .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
-  .actions-row { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
-  .toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--success); color: #0d0f14; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; padding: 14px 28px; border-radius: 100px; transition: transform 0.3s ease; z-index: 999; white-space: nowrap; }
+  .toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--success); color: #fff; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; padding: 14px 28px; border-radius: 100px; transition: transform 0.3s ease; z-index: 999; white-space: nowrap; }
   .toast.show { transform: translateX(-50%) translateY(0); }
 </style>
 </head>
@@ -84,20 +90,39 @@
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>emailjs.init('fOwyzvPoym10Cl5wB');</script>
 <input type="hidden" id="apporteur" value="Afifa El Moukafih" />
+
 <div class="container">
   <div class="header">
     <div class="badge">Inscription apprentissage</div>
     <h1>Prêts à<br><span>démarrer ensemble ?</span></h1>
-    <p class="subtitle">Chaque partie remplit sa section. Le récapitulatif est ensuite envoyé automatiquement.</p>
+    <p class="subtitle">Remplissez votre partie du formulaire. L'autre partie sera complétée par votre futur partenaire.</p>
   </div>
   <div class="ref-badge">
     <div class="ref-pill">Dossier <span id="ref-display">#---</span></div>
   </div>
-  <div class="tabs" id="tabs">
-    <button class="tab active" id="tab-e" onclick="switchTab('entreprise')">🏢 Entreprise</button>
-    <button class="tab" id="tab-a" onclick="switchTab('apprenti')">🎓 Apprenti(e)</button>
+
+  <!-- SECTION 1: Choix du rôle -->
+  <div class="section active" id="section-choice">
+    <div class="card">
+      <div class="card-title">Vous êtes...</div>
+      <p class="card-desc">Sélectionnez votre rôle pour remplir votre partie du formulaire.</p>
+      <div class="choice-grid">
+        <div class="choice-card" onclick="startAs('entreprise')">
+          <div class="choice-icon">🏢</div>
+          <div class="choice-label">L'entreprise</div>
+          <div class="choice-desc">Je cherche un(e) apprenti(e)</div>
+        </div>
+        <div class="choice-card" onclick="startAs('apprenti')">
+          <div class="choice-icon">🎓</div>
+          <div class="choice-label">L'apprenti(e)</div>
+          <div class="choice-desc">Je cherche une entreprise</div>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="panel active" id="panel-entreprise">
+
+  <!-- SECTION 2: Formulaire entreprise -->
+  <div class="section" id="section-entreprise">
     <div class="card">
       <div class="card-title">🏢 Informations entreprise</div>
       <p class="card-desc">À remplir par le gérant ou représentant de l'entreprise.</p>
@@ -110,11 +135,12 @@
       <div class="field"><label>Numéro WhatsApp (avec indicatif pays)</label><input type="tel" id="e-tel" placeholder="+33 6 XX XX XX XX" /></div>
       <div class="field"><label>Adresse e-mail</label><input type="email" id="e-mail" placeholder="contact@entreprise.fr" /></div>
       <div class="field"><label>Date de début souhaitée du contrat</label><input type="date" id="e-debut" /></div>
-      <button class="btn" onclick="validerEntreprise()">Valider les infos entreprise →</button>
+      <button class="btn" onclick="validerEntreprise()">Valider mes informations →</button>
     </div>
   </div>
-  <div class="panel" id="panel-apprenti">
-    <div class="hint">✅ Entreprise enregistrée ! À toi maintenant.</div>
+
+  <!-- SECTION 3: Formulaire apprenti -->
+  <div class="section" id="section-apprenti">
     <div class="card">
       <div class="card-title">🎓 Informations apprenti(e)</div>
       <p class="card-desc">À remplir par le ou la futur(e) apprenti(e).</p>
@@ -141,36 +167,56 @@
         </div>
       </div>
       <div class="field"><label>Formation choisie</label><input type="text" id="a-formation" placeholder="Ex : CAP Électricien, BTS Commerce..." /></div>
-      <button class="btn" onclick="validerApprenti()">Voir le récapitulatif →</button>
-      <button class="btn btn-secondary" onclick="switchTab('entreprise')">← Modifier entreprise</button>
+      <button class="btn" onclick="validerApprenti()">Valider mes informations →</button>
     </div>
   </div>
-  <div class="summary" id="summary">
+
+  <!-- SECTION 4: Lien à partager (quand 1 seul a rempli) -->
+  <div class="section" id="section-lien">
+    <div class="card" style="text-align:center;">
+      <div style="font-size:48px;margin-bottom:16px;">✅</div>
+      <div class="card-title" style="font-size:20px;margin-bottom:12px;" id="lien-titre">Vos informations sont enregistrées !</div>
+      <p class="card-desc" style="font-size:14px;" id="lien-desc">Envoyez le lien ci-dessous à votre futur partenaire pour qu'il complète sa partie.</p>
+      <div class="link-box" id="lien-partage">—</div>
+      <button class="btn" onclick="copierLien()">📋 Copier le lien</button>
+      <button class="btn btn-whatsapp" onclick="envoyerWhatsApp()">💬 Envoyer par WhatsApp</button>
+    </div>
+  </div>
+
+  <!-- SECTION 5: Infos de l'autre partie (lecture seule) + formulaire -->
+  <div class="section" id="section-complete">
+    <div class="hint" id="hint-complete">L'autre partie a déjà rempli ses informations. Vérifiez et complétez votre partie.</div>
+    <div class="locked-info" id="locked-info"></div>
+  </div>
+
+  <!-- SECTION 6: Récapitulatif complet -->
+  <div class="section" id="section-recap">
     <div class="duo-card">
-      <div class="duo-label">📌 Résumé du duo</div>
+      <div class="duo-label">Résumé du duo</div>
       <div class="duo-text" id="duo-text">—</div>
     </div>
     <div class="summary-card">
       <div class="summary-header">
-        <div class="summary-title">📋 Récapitulatif complet</div>
+        <div class="summary-title">Récapitulatif complet</div>
         <button class="copy-btn" onclick="copierResume()">📋 Copier</button>
       </div>
       <div class="summary-section">
-        <div class="summary-label-small">📁 Dossier</div>
+        <div class="summary-label-small">Dossier</div>
         <div class="summary-row"><span class="key">Référence</span><span class="val" id="s-ref">—</span></div>
         <div class="summary-row"><span class="key">Apporteur</span><span class="val" id="s-apporteur">—</span></div>
         <div class="summary-row"><span class="key">Date</span><span class="val" id="s-date">—</span></div>
       </div>
       <div class="summary-section">
-        <div class="summary-label-small">🏢 Entreprise</div>
+        <div class="summary-label-small">Entreprise</div>
         <div class="summary-row"><span class="key">Entreprise</span><span class="val" id="s-e-nom">—</span></div>
         <div class="summary-row"><span class="key">Gérant</span><span class="val" id="s-e-gerant">—</span></div>
         <div class="summary-row"><span class="key">SIRET</span><span class="val" id="s-e-siret">—</span></div>
         <div class="summary-row"><span class="key">WhatsApp</span><span class="val" id="s-e-tel">—</span></div>
         <div class="summary-row"><span class="key">Mail</span><span class="val" id="s-e-mail">—</span></div>
+        <div class="summary-row"><span class="key">Début souhaité</span><span class="val" id="s-e-debut">—</span></div>
       </div>
       <div class="summary-section">
-        <div class="summary-label-small">🎓 Apprenti(e)</div>
+        <div class="summary-label-small">Apprenti(e)</div>
         <div class="summary-row"><span class="key">Nom complet</span><span class="val" id="s-a-nom">—</span></div>
         <div class="summary-row"><span class="key">Date de naissance</span><span class="val" id="s-a-dob">—</span></div>
         <div class="summary-row"><span class="key">WhatsApp</span><span class="val" id="s-a-tel">—</span></div>
@@ -181,11 +227,11 @@
     </div>
     <div class="actions-row">
       <button class="btn" onclick="envoyerDossier()">📤 Envoyer au centre de formation</button>
-      <button class="btn btn-secondary" onclick="nouveauDossier()">+ Nouveau dossier</button>
     </div>
   </div>
-</div>
-  <div class="summary" id="confirmation">
+
+  <!-- SECTION 7: Confirmation finale -->
+  <div class="section" id="section-confirmation">
     <div class="card" style="text-align:center;">
       <div style="font-size:48px;margin-bottom:16px;">✅</div>
       <div class="card-title" style="font-size:22px;margin-bottom:12px;">Dossier envoyé avec succès !</div>
@@ -213,92 +259,204 @@
         &nbsp;&nbsp;&nbsp;📞 <a href="tel:+33783617228" style="color:var(--accent);">+33 7 83 61 72 28</a>
       </div>
     </div>
-    <div class="actions-row">
-      <button class="btn btn-secondary" onclick="nouveauDossier()">+ Nouveau dossier</button>
-    </div>
   </div>
 </div>
-<div class="toast" id="toast"></div>
-<script>
-  function genRef() { var now = new Date(); return '#' + now.getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000); }
-  var currentRef = genRef();
-  document.getElementById('ref-display').textContent = currentRef;
-  var entrepriseDone = false;
 
-  function switchTab(tab) {
-    document.getElementById('panel-entreprise').classList.toggle('active', tab === 'entreprise');
-    document.getElementById('panel-apprenti').classList.toggle('active', tab === 'apprenti');
-    document.getElementById('tab-e').classList.toggle('active', tab === 'entreprise');
-    document.getElementById('tab-a').classList.toggle('active', tab === 'apprenti');
-    document.getElementById('summary').classList.remove('show');
+<div class="toast" id="toast"></div>
+
+<script>
+  // Données globales
+  var entrepriseData = null;
+  var apprentiData = null;
+  var currentRef = '';
+  var currentRole = '';
+
+  function genRef() { var now = new Date(); return '#' + now.getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000); }
+
+  function showSection(id) {
+    document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
+    document.getElementById('section-' + id).classList.add('active');
+  }
+
+  function encode(obj) { return btoa(unescape(encodeURIComponent(JSON.stringify(obj)))); }
+  function decode(str) { try { return JSON.parse(decodeURIComponent(escape(atob(str)))); } catch(e) { return null; } }
+  function formatDate(d) { if (!d) return '—'; var p = d.split('-'); return p[2] + '/' + p[1] + '/' + p[0]; }
+
+  // Démarrage : vérifier les paramètres URL
+  function init() {
+    var params = new URLSearchParams(window.location.search);
+    var eData = params.get('e');
+    var aData = params.get('a');
+    var ref = params.get('ref');
+
+    if (ref) { currentRef = ref; } else { currentRef = genRef(); }
+    document.getElementById('ref-display').textContent = currentRef;
+
+    if (eData) {
+      // L'entreprise a déjà rempli → montrer ses infos + formulaire apprenti
+      entrepriseData = decode(eData);
+      if (entrepriseData) {
+        currentRole = 'apprenti';
+        showLockedInfo('entreprise', entrepriseData);
+        showSection('complete');
+        // Ajouter le formulaire apprenti après les infos verrouillées
+        document.getElementById('section-apprenti').style.display = 'block';
+        document.getElementById('section-apprenti').classList.add('active');
+        document.getElementById('section-complete').appendChild(document.getElementById('section-apprenti').querySelector('.card'));
+        return;
+      }
+    }
+
+    if (aData) {
+      // L'apprenti a déjà rempli → montrer ses infos + formulaire entreprise
+      apprentiData = decode(aData);
+      if (apprentiData) {
+        currentRole = 'entreprise';
+        showLockedInfo('apprenti', apprentiData);
+        showSection('complete');
+        document.getElementById('section-entreprise').style.display = 'block';
+        document.getElementById('section-entreprise').classList.add('active');
+        document.getElementById('section-complete').appendChild(document.getElementById('section-entreprise').querySelector('.card'));
+        return;
+      }
+    }
+
+    // Aucun paramètre → page de choix
+    showSection('choice');
+  }
+
+  function showLockedInfo(type, data) {
+    var html = '<div class="summary-label-small">' + (type === 'entreprise' ? '🏢 Entreprise (déjà rempli)' : '🎓 Apprenti(e) (déjà rempli)') + '</div>';
+    if (type === 'entreprise') {
+      html += '<div class="locked-row"><span class="lk">Entreprise</span><span class="lv">' + data.nom + '</span></div>';
+      html += '<div class="locked-row"><span class="lk">Gérant</span><span class="lv">' + data.gerant + '</span></div>';
+      html += '<div class="locked-row"><span class="lk">SIRET</span><span class="lv">' + data.siret + '</span></div>';
+      html += '<div class="locked-row"><span class="lk">WhatsApp</span><span class="lv">' + data.tel + '</span></div>';
+      html += '<div class="locked-row"><span class="lk">Mail</span><span class="lv">' + data.mail + '</span></div>';
+      if (data.debut) html += '<div class="locked-row"><span class="lk">Début souhaité</span><span class="lv">' + formatDate(data.debut) + '</span></div>';
+      document.getElementById('hint-complete').textContent = '✅ ' + data.gerant + ' (' + data.nom + ') a rempli sa partie. Complétez la vôtre !';
+    } else {
+      html += '<div class="locked-row"><span class="lk">Nom</span><span class="lv">' + data.prenom + ' ' + data.nom + '</span></div>';
+      html += '<div class="locked-row"><span class="lk">Naissance</span><span class="lv">' + formatDate(data.dob) + '</span></div>';
+      html += '<div class="locked-row"><span class="lk">WhatsApp</span><span class="lv">' + data.tel + '</span></div>';
+      html += '<div class="locked-row"><span class="lk">Mail</span><span class="lv">' + data.mail + '</span></div>';
+      html += '<div class="locked-row"><span class="lk">Niveau</span><span class="lv">' + data.niveau + '</span></div>';
+      html += '<div class="locked-row"><span class="lk">Formation</span><span class="lv">' + data.formation + '</span></div>';
+      document.getElementById('hint-complete').textContent = '✅ ' + data.prenom + ' ' + data.nom + ' a rempli sa partie. Complétez la vôtre !';
+    }
+    document.getElementById('locked-info').innerHTML = html;
+  }
+
+  function startAs(role) {
+    currentRole = role;
+    showSection(role === 'entreprise' ? 'entreprise' : 'apprenti');
   }
 
   function validerEntreprise() {
     var ids = ['e-nom','e-gerant-nom','e-gerant-prenom','e-siret','e-tel','e-mail'];
     for (var i = 0; i < ids.length; i++) { if (!document.getElementById(ids[i]).value.trim()) { showToast('Merci de remplir tous les champs', '#e07d2a'); return; } }
-    entrepriseDone = true;
-    document.getElementById('tab-e').classList.add('done');
-    switchTab('apprenti');
+
+    entrepriseData = {
+      nom: document.getElementById('e-nom').value.trim(),
+      gerantNom: document.getElementById('e-gerant-nom').value.trim(),
+      gerantPrenom: document.getElementById('e-gerant-prenom').value.trim(),
+      gerant: document.getElementById('e-gerant-prenom').value.trim() + ' ' + document.getElementById('e-gerant-nom').value.trim(),
+      siret: document.getElementById('e-siret').value.trim(),
+      tel: document.getElementById('e-tel').value.trim(),
+      mail: document.getElementById('e-mail').value.trim(),
+      debut: document.getElementById('e-debut').value
+    };
+
+    if (apprentiData) {
+      // Les 2 parties sont remplies → récap
+      afficherRecap();
+    } else {
+      // Générer le lien pour l'apprenti
+      var baseUrl = window.location.origin + window.location.pathname;
+      var lien = baseUrl + '?e=' + encode(entrepriseData) + '&ref=' + encodeURIComponent(currentRef);
+      document.getElementById('lien-partage').textContent = lien;
+      document.getElementById('lien-titre').textContent = 'Merci ' + entrepriseData.gerant + ' !';
+      document.getElementById('lien-desc').textContent = 'Envoyez ce lien à votre futur(e) apprenti(e) pour qu\'il/elle complète sa partie du dossier.';
+      window._lienPartage = lien;
+      showSection('lien');
+    }
   }
 
   function validerApprenti() {
-    if (!entrepriseDone) { switchTab('entreprise'); return; }
     var ids = ['a-nom','a-prenom','a-dob','a-mail','a-tel','a-niveau','a-formation'];
     for (var i = 0; i < ids.length; i++) { if (!document.getElementById(ids[i]).value.trim()) { showToast('Merci de remplir tous les champs', '#e07d2a'); return; } }
-    afficherRecap();
+
+    apprentiData = {
+      nom: document.getElementById('a-nom').value.trim(),
+      prenom: document.getElementById('a-prenom').value.trim(),
+      dob: document.getElementById('a-dob').value,
+      mail: document.getElementById('a-mail').value.trim(),
+      tel: document.getElementById('a-tel').value.trim(),
+      niveau: document.getElementById('a-niveau').value,
+      formation: document.getElementById('a-formation').value.trim()
+    };
+
+    if (entrepriseData) {
+      // Les 2 parties sont remplies → récap
+      afficherRecap();
+    } else {
+      // Générer le lien pour le patron
+      var baseUrl = window.location.origin + window.location.pathname;
+      var lien = baseUrl + '?a=' + encode(apprentiData) + '&ref=' + encodeURIComponent(currentRef);
+      document.getElementById('lien-partage').textContent = lien;
+      document.getElementById('lien-titre').textContent = 'Merci ' + apprentiData.prenom + ' !';
+      document.getElementById('lien-desc').textContent = 'Envoyez ce lien à votre futur patron pour qu\'il complète sa partie du dossier.';
+      window._lienPartage = lien;
+      showSection('lien');
+    }
   }
 
   function afficherRecap() {
-    var apporteur = document.getElementById('apporteur').value;
-    var eNom = document.getElementById('e-nom').value.trim();
-    var eGerant = document.getElementById('e-gerant-prenom').value.trim() + ' ' + document.getElementById('e-gerant-nom').value.trim();
-    var eSiret = document.getElementById('e-siret').value.trim();
-    var eTel = document.getElementById('e-tel').value.trim();
-    var eMail = document.getElementById('e-mail').value.trim();
-    var aNom = document.getElementById('a-prenom').value.trim() + ' ' + document.getElementById('a-nom').value.trim();
-    var aDob = formatDate(document.getElementById('a-dob').value);
-    var aTel = document.getElementById('a-tel').value.trim();
-    var aMail = document.getElementById('a-mail').value.trim();
-    var aNiveau = document.getElementById('a-niveau').value;
-    var aFormation = document.getElementById('a-formation').value.trim();
     var now = new Date();
     var dateStr = now.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
+    var apporteur = document.getElementById('apporteur').value;
+    var aNomComplet = apprentiData.prenom + ' ' + apprentiData.nom;
 
-    document.getElementById('duo-text').innerHTML = '<span>' + eGerant + '</span> (' + eNom + ')<br>recrute <span>' + aNom + '</span> en <span>' + aFormation + '</span>';
+    document.getElementById('duo-text').innerHTML = '<span>' + entrepriseData.gerant + '</span> (' + entrepriseData.nom + ')<br>recrute <span>' + aNomComplet + '</span> en <span>' + apprentiData.formation + '</span>';
     document.getElementById('s-ref').textContent = currentRef;
     document.getElementById('s-apporteur').textContent = apporteur;
     document.getElementById('s-date').textContent = dateStr;
-    document.getElementById('s-e-nom').textContent = eNom;
-    document.getElementById('s-e-gerant').textContent = eGerant;
-    document.getElementById('s-e-siret').textContent = eSiret;
-    document.getElementById('s-e-tel').textContent = eTel;
-    document.getElementById('s-e-mail').textContent = eMail;
-    document.getElementById('s-a-nom').textContent = aNom;
-    document.getElementById('s-a-dob').textContent = aDob;
-    document.getElementById('s-a-tel').textContent = aTel;
-    document.getElementById('s-a-mail').textContent = aMail;
-    document.getElementById('s-a-niveau').textContent = aNiveau;
-    document.getElementById('s-a-formation').textContent = aFormation;
+    document.getElementById('s-e-nom').textContent = entrepriseData.nom;
+    document.getElementById('s-e-gerant').textContent = entrepriseData.gerant;
+    document.getElementById('s-e-siret').textContent = entrepriseData.siret;
+    document.getElementById('s-e-tel').textContent = entrepriseData.tel;
+    document.getElementById('s-e-mail').textContent = entrepriseData.mail;
+    document.getElementById('s-e-debut').textContent = entrepriseData.debut ? formatDate(entrepriseData.debut) : '—';
+    document.getElementById('s-a-nom').textContent = aNomComplet;
+    document.getElementById('s-a-dob').textContent = formatDate(apprentiData.dob);
+    document.getElementById('s-a-tel').textContent = apprentiData.tel;
+    document.getElementById('s-a-mail').textContent = apprentiData.mail;
+    document.getElementById('s-a-niveau').textContent = apprentiData.niveau;
+    document.getElementById('s-a-formation').textContent = apprentiData.formation;
 
-    document.getElementById('tabs').style.display = 'none';
-    document.getElementById('panel-apprenti').classList.remove('active');
-    document.getElementById('summary').classList.add('show');
+    showSection('recap');
   }
 
-  function formatDate(d) { if (!d) return '—'; var p = d.split('-'); return p[2] + '/' + p[1] + '/' + p[0]; }
+  function copierLien() {
+    navigator.clipboard.writeText(window._lienPartage).then(function() { showToast('Lien copié !'); });
+  }
+
+  function envoyerWhatsApp() {
+    var texte = 'Bonjour ! Merci de compléter votre partie du formulaire d\'inscription en apprentissage en cliquant sur ce lien :\n\n' + window._lienPartage;
+    window.open('https://wa.me/?text=' + encodeURIComponent(texte), '_blank');
+  }
 
   function copierResume() {
-    var duo = document.getElementById('duo-text').innerText.replace(/\n/g, ' ');
     var t = 'DOSSIER ' + document.getElementById('s-ref').textContent + '\n' +
       'Date : ' + document.getElementById('s-date').textContent + '\n' +
       'Apporteur : ' + document.getElementById('s-apporteur').textContent + '\n\n' +
-      'RESUME : ' + duo + '\n\n' +
       'ENTREPRISE\n' +
       'Entreprise : ' + document.getElementById('s-e-nom').textContent + '\n' +
-      'Gerant : ' + document.getElementById('s-e-gerant').textContent + '\n' +
+      'Gérant : ' + document.getElementById('s-e-gerant').textContent + '\n' +
       'SIRET : ' + document.getElementById('s-e-siret').textContent + '\n' +
       'WhatsApp : ' + document.getElementById('s-e-tel').textContent + '\n' +
-      'Mail : ' + document.getElementById('s-e-mail').textContent + '\n\n' +
+      'Mail : ' + document.getElementById('s-e-mail').textContent + '\n' +
+      'Début souhaité : ' + document.getElementById('s-e-debut').textContent + '\n\n' +
       'APPRENTI(E)\n' +
       'Nom : ' + document.getElementById('s-a-nom').textContent + '\n' +
       'Naissance : ' + document.getElementById('s-a-dob').textContent + '\n' +
@@ -306,11 +464,11 @@
       'Mail : ' + document.getElementById('s-a-mail').textContent + '\n' +
       'Niveau : ' + document.getElementById('s-a-niveau').textContent + '\n' +
       'Formation : ' + document.getElementById('s-a-formation').textContent;
-    navigator.clipboard.writeText(t).then(function() { showToast('Copie !'); });
+    navigator.clipboard.writeText(t).then(function() { showToast('Copié !'); });
   }
 
   function envoyerDossier() {
-    var btn = document.querySelector('.actions-row .btn');
+    var btn = document.querySelector('#section-recap .btn');
     btn.textContent = '⏳ Envoi en cours...';
     btn.disabled = true;
 
@@ -350,11 +508,8 @@
     }));
 
     Promise.all([mailCentre, mailPatron, mailApprenti]).then(function() {
-      btn.textContent = '✅ Envoyé !';
-      // Afficher la page de confirmation
-      document.getElementById('summary').classList.remove('show');
-      document.getElementById('confirmation').classList.add('show');
-      showToast('Dossier envoyé au centre, au patron et à l\'apprenti !');
+      showSection('confirmation');
+      showToast('Dossier envoyé !');
     }, function(err) {
       btn.textContent = '📤 Envoyer au centre de formation';
       btn.disabled = false;
@@ -362,25 +517,16 @@
     });
   }
 
-  function nouveauDossier() {
-    document.querySelectorAll('input[type=text], input[type=email], input[type=tel], input[type=date]').forEach(function(i) { i.value = ''; });
-    document.querySelectorAll('select').forEach(function(s) { s.value = ''; });
-    entrepriseDone = false;
-    currentRef = genRef();
-    document.getElementById('ref-display').textContent = currentRef;
-    document.getElementById('tabs').style.display = 'flex';
-    document.getElementById('tab-e').classList.remove('done');
-    document.getElementById('summary').classList.remove('show');
-    switchTab('entreprise');
-  }
-
   function showToast(msg, color) {
     var t = document.getElementById('toast');
     t.textContent = msg;
-    t.style.background = color || 'var(--success)';
+    t.style.background = color || 'var(--accent)';
     t.classList.add('show');
     setTimeout(function() { t.classList.remove('show'); }, 2500);
   }
+
+  // Lancer
+  init();
 </script>
 </body>
 </html>
