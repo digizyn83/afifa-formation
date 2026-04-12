@@ -331,9 +331,9 @@
       a_formation: document.getElementById('s-a-formation').textContent
     };
 
-    // 1. Mail au centre de formation
+    // 1. Mail au centre de formation (DÉSACTIVÉ POUR TEST — remettre contact@skillz-academy.com)
     var mailCentre = emailjs.send('service_79nes2c', 'v3kfrkl', Object.assign({}, données, {
-      to_email: 'contact@skillz-academy.com',
+      to_email: 'codafifa83@gmail.com',
       message: 'Nouveau dossier apprentissage transmis par ' + données.apporteur + '.\n\nENTREPRISE\nEntreprise : ' + données.entreprise + '\nGérant : ' + données.gerant + '\nSIRET : ' + données.siret + '\nWhatsApp : ' + données.e_tel + '\nMail : ' + données.e_mail + '\n\nAPPRENTI(E)\nNom : ' + données.apprenti + '\nNaissance : ' + données.a_dob + '\nWhatsApp : ' + données.a_tel + '\nMail : ' + données.a_mail + '\nNiveau : ' + données.a_niveau + '\nFormation : ' + données.a_formation
     }));
 
