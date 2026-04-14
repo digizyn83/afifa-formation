@@ -101,8 +101,50 @@
     <div class="ref-pill">Dossier <span id="ref-display">#---</span></div>
   </div>
 
+  <!-- SECTION ADMIN : liste des dossiers (accès via ?admin=1) -->
+  <div class="section" id="section-admin">
+    <div class="card">
+      <div class="card-title">📋 Tous mes dossiers</div>
+      <p class="card-desc">Vue d'ensemble de tous les dossiers créés. Clique sur un dossier pour copier son lien.</p>
+      <div id="admin-list" style="margin-top:20px;"></div>
+      <button class="btn" style="margin-top:20px;" onclick="window.location.href=window.location.pathname">← Retour accueil</button>
+    </div>
+  </div>
+
+  <!-- Loader -->
+  <div class="section active" id="section-loading">
+    <div class="card" style="text-align:center;">
+      <div style="font-size:40px;margin-bottom:12px;">⏳</div>
+      <div class="card-title">Chargement...</div>
+    </div>
+  </div>
+
+  <!-- SECTION 0: Accueil (Afifa crée un nouveau dossier) -->
+  <div class="section" id="section-home">
+    <div class="card" style="text-align:center;">
+      <div style="font-size:48px;margin-bottom:16px;">🤝</div>
+      <div class="card-title" style="font-size:20px;margin-bottom:12px;">Démarrer un nouveau dossier</div>
+      <p class="card-desc" style="font-size:14px;">Créez un lien unique à envoyer au patron ET à l'apprenti(e). Chacun remplira sa partie, de son côté.</p>
+      <button class="btn" onclick="window.nouveauDossier()">✨ Créer un nouveau dossier</button>
+      <button class="btn btn-secondary" onclick="window.location.search='?admin=1'">📋 Voir tous mes dossiers</button>
+    </div>
+  </div>
+
+  <!-- SECTION 0b: Lien à partager par Afifa -->
+  <div class="section" id="section-share">
+    <div class="card" style="text-align:center;">
+      <div style="font-size:48px;margin-bottom:16px;">✅</div>
+      <div class="card-title" style="font-size:20px;margin-bottom:12px;">Dossier créé !</div>
+      <p class="card-desc" style="font-size:14px;">Envoie ce lien au patron <strong>et</strong> à l'apprenti(e). Ils pourront chacun remplir leur partie, de leur côté, sur leur propre téléphone.</p>
+      <div class="link-box" id="share-link">—</div>
+      <button class="btn" onclick="window.copierLienShare()">📋 Copier le lien</button>
+      <button class="btn btn-whatsapp" onclick="window.envoyerWhatsAppShare()">💬 Envoyer par WhatsApp</button>
+      <button class="btn btn-secondary" onclick="window.location.href=window.location.pathname">Accueil</button>
+    </div>
+  </div>
+
   <!-- SECTION 1: Choix du rôle -->
-  <div class="section active" id="section-choice">
+  <div class="section" id="section-choice">
     <div class="card">
       <div class="card-title">Vous êtes...</div>
       <p class="card-desc">Sélectionnez votre rôle pour remplir votre partie du formulaire.</p>
@@ -166,7 +208,7 @@
           </select>
         </div>
       </div>
-      <div class="field"><label>Formation choisie</label><input type="text" id="a-formation" placeholder="Ex : CAP Électricien, BTS Commerce..." /></div>
+      <div class="field"><label>Formation choisie</label><input type="text" id="a-formation" placeholder="Nom de la formation souhaitée" /></div>
       <button class="btn" onclick="validerApprenti()">Valider mes informations →</button>
     </div>
   </div>
@@ -226,7 +268,16 @@
       </div>
     </div>
     <div class="actions-row">
-      <button class="btn" onclick="envoyerDossier()">📤 Envoyer au centre de formation</button>
+      <div class="hint">⏳ Envoi des mails en cours...</div>
+    </div>
+  </div>
+
+  <!-- SECTION en attente : ma partie est remplie, j'attends l'autre -->
+  <div class="section" id="section-waiting">
+    <div class="card" style="text-align:center;">
+      <div style="font-size:48px;margin-bottom:16px;">⏳</div>
+      <div class="card-title" style="font-size:20px;margin-bottom:12px;">Votre partie est enregistrée !</div>
+      <p class="card-desc" style="font-size:14px;" id="waiting-desc">En attente de l'autre partie... Dès qu'elle sera remplie, le dossier sera envoyé automatiquement au centre de formation.</p>
     </div>
   </div>
 
@@ -264,12 +315,29 @@
 
 <div class="toast" id="toast"></div>
 
-<script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, doc, setDoc, updateDoc, onSnapshot, getDoc, runTransaction, serverTimestamp, collection, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBZ_8ROLtom657LmR0qkfHlekLnQkNY1DA",
+    authDomain: "apprentissage-925b7.firebaseapp.com",
+    projectId: "apprentissage-925b7",
+    storageBucket: "apprentissage-925b7.firebasestorage.app",
+    messagingSenderId: "758149752628",
+    appId: "1:758149752628:web:a0050e1d5850bf8a8f6761"
+  };
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
   // Données globales
   var entrepriseData = null;
   var apprentiData = null;
   var currentRef = '';
   var currentRole = '';
+  var currentId = null;
+  var currentDoc = null;
+  var mailsEnCours = false;
 
   function genRef() { var now = new Date(); return '#' + now.getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000); }
 
@@ -278,50 +346,185 @@
     document.getElementById('section-' + id).classList.add('active');
   }
 
-  function encode(obj) { return btoa(unescape(encodeURIComponent(JSON.stringify(obj)))); }
-  function decode(str) { try { return JSON.parse(decodeURIComponent(escape(atob(str)))); } catch(e) { return null; } }
   function formatDate(d) { if (!d) return '—'; var p = d.split('-'); return p[2] + '/' + p[1] + '/' + p[0]; }
+  function genId() { return Math.random().toString(36).slice(2, 8) + Date.now().toString(36).slice(-4); }
 
-  // Démarrage : vérifier les paramètres URL
-  function init() {
+  // Afifa crée un nouveau dossier
+  window.nouveauDossier = async function() {
+    var id = genId();
+    var ref = genRef();
+    await setDoc(doc(db, 'dossiers', id), {
+      ref: ref,
+      apporteur: 'Afifa El Moukafih',
+      createdAt: serverTimestamp(),
+      mailsEnvoyes: false
+    });
+    var url = window.location.origin + window.location.pathname + '?id=' + id;
+    document.getElementById('share-link').textContent = url;
+    window._shareLink = url;
+    showSection('share');
+  };
+
+  window.copierLienShare = function() {
+    navigator.clipboard.writeText(window._shareLink).then(function() { showToast('Lien copié !'); });
+  };
+
+  window.envoyerWhatsAppShare = function() {
+    var texte = 'Bonjour 👋\n\nVoici le lien pour remplir votre dossier d\'apprentissage. Patron et apprenti(e) peuvent chacun remplir leur partie depuis ce lien :\n\n' + window._shareLink + '\n\nUne fois que les 2 parties sont remplies, le dossier est envoyé automatiquement.';
+    window.open('https://wa.me/?text=' + encodeURIComponent(texte), '_blank');
+  };
+
+  async function chargerAdmin() {
+    var listEl = document.getElementById('admin-list');
+    listEl.innerHTML = '<p style="color:var(--muted);font-size:13px;">Chargement...</p>';
+    try {
+      var q = query(collection(db, 'dossiers'), orderBy('createdAt', 'desc'));
+      var snap = await getDocs(q);
+      if (snap.empty) { listEl.innerHTML = '<p style="color:var(--muted);">Aucun dossier pour l\'instant.</p>'; return; }
+      var html = '';
+      snap.forEach(function(d) {
+        var data = d.data();
+        var statusE = data.entreprise ? '✅' : '⏳';
+        var statusA = data.apprenti ? '✅' : '⏳';
+        var statusMail = data.mailsEnvoyes ? '📧 Envoyés' : '—';
+        var nomE = data.entreprise ? (data.entreprise.gerant + ' (' + data.entreprise.nom + ')') : 'Patron en attente';
+        var nomA = data.apprenti ? (data.apprenti.prenom + ' ' + data.apprenti.nom) : 'Apprenti en attente';
+        var lien = window.location.origin + window.location.pathname + '?id=' + d.id;
+        var waBtn = '';
+        if (data.entreprise && data.apprenti) {
+          waBtn = '<button class="copy-btn" style="background:#25d366;color:#fff;border-color:#25d366;margin-left:8px;" onclick="window.envoyerCfaWhatsApp(\'' + d.id + '\')">📱 Envoyer au CFA (WhatsApp)</button>';
+        }
+        html += '<div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;">' +
+          '<div style="font-family:Syne,sans-serif;font-weight:700;font-size:14px;margin-bottom:6px;">Dossier ' + (data.ref || d.id) + '</div>' +
+          '<div style="font-size:13px;color:var(--muted);margin-bottom:4px;">🏢 ' + statusE + ' ' + nomE + '</div>' +
+          '<div style="font-size:13px;color:var(--muted);margin-bottom:4px;">🎓 ' + statusA + ' ' + nomA + '</div>' +
+          '<div style="font-size:13px;color:var(--muted);margin-bottom:8px;">' + statusMail + '</div>' +
+          '<button class="copy-btn" onclick="window.copierLienDossier(\'' + lien + '\')">📋 Copier le lien</button>' +
+          ' <button class="copy-btn" onclick="window.open(\'' + lien + '\',\'_blank\')">🔗 Ouvrir</button>' +
+          waBtn +
+          '</div>';
+      });
+      listEl.innerHTML = html;
+    } catch(err) {
+      listEl.innerHTML = '<p style="color:#e07d2a;">Erreur : ' + err.message + '</p>';
+    }
+  }
+
+  window.copierLienDossier = function(lien) {
+    navigator.clipboard.writeText(lien).then(function() { showToast('Lien copié !'); });
+  };
+
+  window.envoyerCfaWhatsApp = async function(dossierId) {
+    var snap = await getDoc(doc(db, 'dossiers', dossierId));
+    if (!snap.exists()) { showToast('Dossier introuvable', '#e07d2a'); return; }
+    var d = snap.data();
+    var e = d.entreprise, a = d.apprenti;
+    var msg = 'Bonjour,\n\n'
+      + 'Nouveau dossier d\'apprentissage — ' + (d.ref || '') + '\n\n'
+      + '— ENTREPRISE —\n'
+      + 'Raison sociale : ' + e.nom + '\n'
+      + 'Gérant : ' + e.gerant + '\n'
+      + 'SIRET : ' + e.siret + '\n'
+      + 'Email : ' + e.mail + '\n'
+      + 'WhatsApp : ' + e.tel + '\n\n'
+      + '— APPRENTI(E) —\n'
+      + 'Nom : ' + a.prenom + ' ' + a.nom + '\n'
+      + 'Email : ' + a.mail + '\n'
+      + 'WhatsApp : ' + a.tel + '\n'
+      + 'Niveau : ' + a.niveau + '\n'
+      + 'Formation : ' + a.formation + '\n\n'
+      + 'Merci,\nAfifa';
+    // Numéro CFA Skillz Academy : +33 7 83 61 72 28
+    window.open('https://wa.me/33783617228?text=' + encodeURIComponent(msg), '_blank');
+  };
+
+  // Démarrage : vérifier l'URL
+  async function init() {
     var params = new URLSearchParams(window.location.search);
-    var eData = params.get('e');
-    var aData = params.get('a');
-    var ref = params.get('ref');
+    var id = params.get('id');
+    var admin = params.get('admin');
 
-    if (ref) { currentRef = ref; } else { currentRef = genRef(); }
+    if (admin === '1') {
+      showSection('admin');
+      chargerAdmin();
+      return;
+    }
+
+    if (!id) {
+      // Pas d'id → page d'accueil (Afifa)
+      showSection('home');
+      return;
+    }
+
+    currentId = id;
+    var docRef = doc(db, 'dossiers', id);
+    var snap = await getDoc(docRef);
+    if (!snap.exists()) {
+      showToast('Dossier introuvable', '#e07d2a');
+      showSection('home');
+      return;
+    }
+
+    // Écoute temps réel : dès qu'un des 2 remplit sa partie, la vue se met à jour
+    onSnapshot(docRef, function(snap) {
+      currentDoc = snap.data();
+      updateView();
+    });
+  }
+
+  function updateView() {
+    if (!currentDoc) return;
+    currentRef = currentDoc.ref || '#---';
     document.getElementById('ref-display').textContent = currentRef;
 
-    if (eData) {
-      // L'entreprise a déjà rempli → montrer ses infos + formulaire apprenti
-      entrepriseData = decode(eData);
-      if (entrepriseData) {
-        currentRole = 'apprenti';
-        showLockedInfo('entreprise', entrepriseData);
-        showSection('complete');
-        // Ajouter le formulaire apprenti après les infos verrouillées
-        document.getElementById('section-apprenti').style.display = 'block';
-        document.getElementById('section-apprenti').classList.add('active');
-        document.getElementById('section-complete').appendChild(document.getElementById('section-apprenti').querySelector('.card'));
-        return;
+    var hasEntreprise = !!currentDoc.entreprise;
+    var hasApprenti = !!currentDoc.apprenti;
+    var myRole = sessionStorage.getItem('role_' + currentId);
+
+    if (hasEntreprise && hasApprenti) {
+      entrepriseData = currentDoc.entreprise;
+      apprentiData = currentDoc.apprenti;
+      if (currentDoc.mailsEnvoyes) {
+        showSection('confirmation');
+      } else {
+        afficherRecap();
+        if (!mailsEnCours) { mailsEnCours = true; envoyerDossier(); }
       }
+      return;
     }
 
-    if (aData) {
-      // L'apprenti a déjà rempli → montrer ses infos + formulaire entreprise
-      apprentiData = decode(aData);
-      if (apprentiData) {
-        currentRole = 'entreprise';
-        showLockedInfo('apprenti', apprentiData);
-        showSection('complete');
-        document.getElementById('section-entreprise').style.display = 'block';
-        document.getElementById('section-entreprise').classList.add('active');
-        document.getElementById('section-complete').appendChild(document.getElementById('section-entreprise').querySelector('.card'));
-        return;
-      }
+    // J'ai déjà rempli ma partie → attente de l'autre
+    if ((myRole === 'entreprise' && hasEntreprise) || (myRole === 'apprenti' && hasApprenti)) {
+      document.getElementById('waiting-desc').textContent = myRole === 'entreprise'
+        ? 'En attente de l\'apprenti(e)... Dès qu\'il/elle aura rempli sa partie, le dossier sera envoyé automatiquement.'
+        : 'En attente du patron... Dès qu\'il aura rempli sa partie, le dossier sera envoyé automatiquement.';
+      showSection('waiting');
+      return;
     }
 
-    // Aucun paramètre → page de choix
+    if (hasEntreprise) {
+      entrepriseData = currentDoc.entreprise;
+      showLockedInfo('entreprise', entrepriseData);
+      showSection('complete');
+      var cardA = document.querySelector('#section-apprenti .card');
+      if (cardA && cardA.parentElement && cardA.parentElement.id !== 'section-complete') {
+        document.getElementById('section-complete').appendChild(cardA);
+      }
+      return;
+    }
+
+    if (hasApprenti) {
+      apprentiData = currentDoc.apprenti;
+      showLockedInfo('apprenti', apprentiData);
+      showSection('complete');
+      var cardE = document.querySelector('#section-entreprise .card');
+      if (cardE && cardE.parentElement && cardE.parentElement.id !== 'section-complete') {
+        document.getElementById('section-complete').appendChild(cardE);
+      }
+      return;
+    }
+
+    // Les 2 vides → choix du rôle
     showSection('choice');
   }
 
@@ -347,16 +550,11 @@
     document.getElementById('locked-info').innerHTML = html;
   }
 
-  function startAs(role) {
-    currentRole = role;
-    showSection(role === 'entreprise' ? 'entreprise' : 'apprenti');
-  }
-
-  function validerEntreprise() {
+  window.validerEntreprise = async function() {
     var ids = ['e-nom','e-gerant-nom','e-gerant-prenom','e-siret','e-tel','e-mail'];
     for (var i = 0; i < ids.length; i++) { if (!document.getElementById(ids[i]).value.trim()) { showToast('Merci de remplir tous les champs', '#e07d2a'); return; } }
 
-    entrepriseData = {
+    var data = {
       nom: document.getElementById('e-nom').value.trim(),
       gerantNom: document.getElementById('e-gerant-nom').value.trim(),
       gerantPrenom: document.getElementById('e-gerant-prenom').value.trim(),
@@ -367,26 +565,20 @@
       debut: document.getElementById('e-debut').value
     };
 
-    if (apprentiData) {
-      // Les 2 parties sont remplies → récap
-      afficherRecap();
-    } else {
-      // Générer le lien pour l'apprenti
-      var baseUrl = window.location.origin + window.location.pathname;
-      var lien = baseUrl + '?e=' + encode(entrepriseData) + '&ref=' + encodeURIComponent(currentRef);
-      document.getElementById('lien-partage').textContent = lien;
-      document.getElementById('lien-titre').textContent = 'Merci ' + entrepriseData.gerant + ' !';
-      document.getElementById('lien-desc').textContent = 'Envoyez ce lien à votre futur(e) apprenti(e) pour qu\'il/elle complète sa partie du dossier.';
-      window._lienPartage = lien;
-      showSection('lien');
+    try {
+      await updateDoc(doc(db, 'dossiers', currentId), { entreprise: data });
+      sessionStorage.setItem('role_' + currentId, 'entreprise');
+      showToast('Partie entreprise validée !');
+    } catch(err) {
+      showToast('Erreur : ' + err.message, '#e07d2a');
     }
-  }
+  };
 
-  function validerApprenti() {
+  window.validerApprenti = async function() {
     var ids = ['a-nom','a-prenom','a-dob','a-mail','a-tel','a-niveau','a-formation'];
     for (var i = 0; i < ids.length; i++) { if (!document.getElementById(ids[i]).value.trim()) { showToast('Merci de remplir tous les champs', '#e07d2a'); return; } }
 
-    apprentiData = {
+    var data = {
       nom: document.getElementById('a-nom').value.trim(),
       prenom: document.getElementById('a-prenom').value.trim(),
       dob: document.getElementById('a-dob').value,
@@ -396,20 +588,19 @@
       formation: document.getElementById('a-formation').value.trim()
     };
 
-    if (entrepriseData) {
-      // Les 2 parties sont remplies → récap
-      afficherRecap();
-    } else {
-      // Générer le lien pour le patron
-      var baseUrl = window.location.origin + window.location.pathname;
-      var lien = baseUrl + '?a=' + encode(apprentiData) + '&ref=' + encodeURIComponent(currentRef);
-      document.getElementById('lien-partage').textContent = lien;
-      document.getElementById('lien-titre').textContent = 'Merci ' + apprentiData.prenom + ' !';
-      document.getElementById('lien-desc').textContent = 'Envoyez ce lien à votre futur patron pour qu\'il complète sa partie du dossier.';
-      window._lienPartage = lien;
-      showSection('lien');
+    try {
+      await updateDoc(doc(db, 'dossiers', currentId), { apprenti: data });
+      sessionStorage.setItem('role_' + currentId, 'apprenti');
+      showToast('Partie apprenti validée !');
+    } catch(err) {
+      showToast('Erreur : ' + err.message, '#e07d2a');
     }
-  }
+  };
+
+  window.startAs = function(role) {
+    currentRole = role;
+    showSection(role === 'entreprise' ? 'entreprise' : 'apprenti');
+  };
 
   function afficherRecap() {
     var now = new Date();
@@ -446,7 +637,7 @@
     window.open('https://wa.me/?text=' + encodeURIComponent(texte), '_blank');
   }
 
-  function copierResume() {
+  window.copierResume = function() {
     var t = 'DOSSIER ' + document.getElementById('s-ref').textContent + '\n' +
       'Date : ' + document.getElementById('s-date').textContent + '\n' +
       'Apporteur : ' + document.getElementById('s-apporteur').textContent + '\n\n' +
@@ -467,12 +658,22 @@
     navigator.clipboard.writeText(t).then(function() { showToast('Copié !'); });
   }
 
-  function envoyerDossier() {
-    var btn = document.querySelector('#section-recap .btn');
-    btn.textContent = '⏳ Envoi en cours...';
-    btn.disabled = true;
+  async function envoyerDossier() {
+    // Transaction : un seul des 2 clients envoie les mails
+    try {
+      var shouldSend = await runTransaction(db, async function(tx) {
+        var s = await tx.get(doc(db, 'dossiers', currentId));
+        if (s.data().mailsEnvoyes) return false;
+        tx.update(doc(db, 'dossiers', currentId), { mailsEnvoyes: true, sentAt: serverTimestamp() });
+        return true;
+      });
+      if (!shouldSend) { showSection('confirmation'); return; }
+    } catch(err) {
+      showToast('Erreur : ' + err.message, '#e07d2a');
+      return;
+    }
 
-    var données = {
+    var d = {
       ref: document.getElementById('s-ref').textContent,
       date: document.getElementById('s-date').textContent,
       apporteur: document.getElementById('s-apporteur').textContent,
@@ -482,6 +683,7 @@
       e_tel: document.getElementById('s-e-tel').textContent,
       e_mail: document.getElementById('s-e-mail').textContent,
       apprenti: document.getElementById('s-a-nom').textContent,
+      a_prenom: apprentiData.prenom,
       a_dob: document.getElementById('s-a-dob').textContent,
       a_tel: document.getElementById('s-a-tel').textContent,
       a_mail: document.getElementById('s-a-mail').textContent,
@@ -489,31 +691,84 @@
       a_formation: document.getElementById('s-a-formation').textContent
     };
 
-    // 1. Mail au centre de formation (DÉSACTIVÉ POUR TEST — remettre contact@skillz-academy.com)
-    var mailCentre = emailjs.send('service_79nes2c', 'v3kfrkl', Object.assign({}, données, {
-      to_email: 'codafifa83@gmail.com',
-      message: 'Nouveau dossier apprentissage transmis par ' + données.apporteur + '.\n\nENTREPRISE\nEntreprise : ' + données.entreprise + '\nGérant : ' + données.gerant + '\nSIRET : ' + données.siret + '\nWhatsApp : ' + données.e_tel + '\nMail : ' + données.e_mail + '\n\nAPPRENTI(E)\nNom : ' + données.apprenti + '\nNaissance : ' + données.a_dob + '\nWhatsApp : ' + données.a_tel + '\nMail : ' + données.a_mail + '\nNiveau : ' + données.a_niveau + '\nFormation : ' + données.a_formation
-    }));
+    // 1. Mail au centre de formation Skillz Academy
+    var msgCFA = 'Bonjour,\n\n'
+      + 'Je vous transmets un nouveau dossier d\'apprentissage pour lequel j\'ai mis en relation un employeur et un(e) apprenti(e). Les deux parties ont rempli leur dossier ci-dessous :\n\n'
+      + '— ENTREPRISE —\n'
+      + 'Raison sociale : ' + d.entreprise + '\n'
+      + 'Gérant : ' + d.gerant + '\n'
+      + 'SIRET : ' + d.siret + '\n'
+      + 'Email : ' + d.e_mail + '\n'
+      + 'WhatsApp : ' + d.e_tel + '\n\n'
+      + '— APPRENTI(E) —\n'
+      + 'Nom : ' + d.apprenti + '\n'
+      + 'Date de naissance : ' + d.a_dob + '\n'
+      + 'Email : ' + d.a_mail + '\n'
+      + 'WhatsApp : ' + d.a_tel + '\n'
+      + 'Niveau : ' + d.a_niveau + '\n'
+      + 'Formation souhaitée : ' + d.a_formation + '\n\n'
+      + 'Merci de prendre contact avec eux pour la suite de la procédure.\n\n'
+      + 'Bien cordialement,\n'
+      + d.apporteur;
+    var mailCentre = emailjs.send('service_79nes2c', 'template_mndajh3', {
+      to_email: 'contact@skillz-academy.com',
+      name: d.apporteur,
+      email: d.e_mail,
+      subject: 'Nouveau dossier d\'apprentissage — ' + d.entreprise + ' / ' + d.apprenti,
+      message: msgCFA
+    });
 
     // 2. Mail au patron
-    var mailPatron = emailjs.send('service_79nes2c', 'v3kfrkl', Object.assign({}, données, {
-      to_email: données.e_mail,
-      message: 'Bonjour ' + données.gerant + ',\n\nMerci d\'avoir rempli le formulaire d\'inscription en apprentissage.\n\nVoici les prochaines étapes :\n\n1. Préparez votre CV\n2. Attendez un mail du centre de formation Skillz Academy avec un formulaire à remplir\n3. Pour toute question concernant l\'URSSAF, les aides à l\'embauche ou autre, contactez le centre de formation :\n   - Email : contact@skillz-academy.com\n   - Téléphone : +33 7 83 61 72 28\n\nCordialement,\nSkillz Academy'
-    }));
+    var msgPatron = 'Bonjour ' + d.gerant + ',\n\n'
+      + 'Merci d\'avoir validé votre dossier d\'apprentissage avec ' + d.apprenti + '.\n\n'
+      + 'Prochaines étapes :\n\n'
+      + '1. Préparez votre CV (à fournir au centre de formation).\n'
+      + '2. Le centre de formation Skillz Academy va vous contacter prochainement avec un formulaire à remplir.\n'
+      + '3. Pour toute question (URSSAF, aides à l\'embauche, etc.), contactez directement le centre :\n'
+      + '   • Email : contact@skillz-academy.com\n'
+      + '   • Téléphone : +33 7 83 61 72 28\n\n'
+      + 'Cordialement,\n'
+      + 'Afifa';
+    var mailPatron = emailjs.send('service_79nes2c', 'template_mndajh3', {
+      to_email: d.e_mail,
+      name: 'Afifa',
+      email: 'admin@lecoindine.com',
+      subject: 'Votre dossier d\'apprentissage — prochaines étapes',
+      message: msgPatron
+    });
 
     // 3. Mail à l'apprenti
-    var mailApprenti = emailjs.send('service_79nes2c', 'v3kfrkl', Object.assign({}, données, {
-      to_email: données.a_mail,
-      message: 'Bonjour ' + données.apprenti + ',\n\nMerci d\'avoir rempli le formulaire d\'inscription en apprentissage.\n\nVoici les prochaines étapes :\n\n1. Préparez les documents suivants :\n   - Pièce d\'identité (recto/verso)\n   - Attestation de sécurité sociale\n   - CV\n   - Lettre de motivation\n\n2. Attendez un mail du centre de formation Skillz Academy avec un formulaire à remplir\n\n3. Vous recevrez ensuite le contrat à remplir et à signer (par vous-même et par votre tuteur si vous êtes mineur)\n\nPour toute question, contactez le centre de formation :\n   - Email : contact@skillz-academy.com\n   - Téléphone : +33 7 83 61 72 28\n\nCordialement,\nSkillz Academy'
-    }));
+    var msgApprenti = 'Bonjour ' + d.a_prenom + ',\n\n'
+      + 'Merci d\'avoir validé votre dossier d\'apprentissage avec ' + d.entreprise + '.\n\n'
+      + 'Prochaines étapes :\n\n'
+      + '1. Préparez les documents suivants :\n'
+      + '   • Pièce d\'identité (recto/verso)\n'
+      + '   • Attestation de sécurité sociale\n'
+      + '   • CV\n'
+      + '   • Lettre de motivation\n\n'
+      + '2. Le centre de formation Skillz Academy va vous contacter prochainement avec un formulaire à remplir.\n\n'
+      + '3. Vous recevrez ensuite le contrat à signer (par vous-même, et par votre tuteur si vous êtes mineur).\n\n'
+      + 'Pour toute question, contactez le centre :\n'
+      + '   • Email : contact@skillz-academy.com\n'
+      + '   • Téléphone : +33 7 83 61 72 28\n\n'
+      + 'Cordialement,\n'
+      + 'Afifa';
+    var mailApprenti = emailjs.send('service_79nes2c', 'template_mndajh3', {
+      to_email: d.a_mail,
+      name: 'Afifa',
+      email: 'admin@lecoindine.com',
+      subject: 'Votre dossier d\'apprentissage — prochaines étapes',
+      message: msgApprenti
+    });
 
     Promise.all([mailCentre, mailPatron, mailApprenti]).then(function() {
       showSection('confirmation');
       showToast('Dossier envoyé !');
     }, function(err) {
-      btn.textContent = '📤 Envoyer au centre de formation';
-      btn.disabled = false;
-      showToast('Erreur : ' + (err.text || err), '#e07d2a');
+      showToast('Erreur envoi mails : ' + (err.text || err.message || err), '#e07d2a');
+      // Réinitialiser pour pouvoir réessayer
+      updateDoc(doc(db, 'dossiers', currentId), { mailsEnvoyes: false });
+      mailsEnCours = false;
     });
   }
 
