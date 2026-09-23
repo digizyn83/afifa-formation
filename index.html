@@ -170,8 +170,8 @@
       <p class="card-desc">À remplir par le gérant ou représentant de l'entreprise.</p>
       <div class="field"><label>Nom de l'entreprise</label><input type="text" id="e-nom" placeholder="Ex : Menuiserie Dupont" /></div>
       <div class="field-row">
-        <div class="field"><label>Nom du gérant</label><input type="text" id="e-gerant-nom" placeholder="Nom" /></div>
-        <div class="field"><label>Prénom du gérant</label><input type="text" id="e-gerant-prenom" placeholder="Prénom" /></div>
+        <div class="field"><label>Nom du tuteur d'apprentissage</label><input type="text" id="e-tuteur-nom" placeholder="Nom" /></div>
+        <div class="field"><label>Prénom du tuteur d'apprentissage</label><input type="text" id="e-tuteur-prenom" placeholder="Prénom" /></div>
       </div>
       <div class="field"><label>Numéro SIRET</label><input type="text" id="e-siret" placeholder="14 chiffres" maxlength="17" /></div>
       <div class="field"><label>Numéro WhatsApp (avec indicatif pays)</label><input type="tel" id="e-tel" placeholder="+33 6 XX XX XX XX" /></div>
@@ -251,7 +251,7 @@
       <div class="summary-section">
         <div class="summary-label-small">Entreprise</div>
         <div class="summary-row"><span class="key">Entreprise</span><span class="val" id="s-e-nom">—</span></div>
-        <div class="summary-row"><span class="key">Gérant</span><span class="val" id="s-e-gerant">—</span></div>
+        <div class="summary-row"><span class="key">Tuteur d'apprentissage</span><span class="val" id="s-e-tuteur">—</span></div>
         <div class="summary-row"><span class="key">SIRET</span><span class="val" id="s-e-siret">—</span></div>
         <div class="summary-row"><span class="key">WhatsApp</span><span class="val" id="s-e-tel">—</span></div>
         <div class="summary-row"><span class="key">Mail</span><span class="val" id="s-e-mail">—</span></div>
@@ -387,7 +387,7 @@
         var statusE = data.entreprise ? '✅' : '⏳';
         var statusA = data.apprenti ? '✅' : '⏳';
         var statusMail = data.mailsEnvoyes ? '📧 Envoyés' : '—';
-        var nomE = data.entreprise ? (data.entreprise.gerant + ' (' + data.entreprise.nom + ')') : 'Patron en attente';
+        var nomE = data.entreprise ? (data.entreprise.tuteur + ' (' + data.entreprise.nom + ')') : 'Patron en attente';
         var nomA = data.apprenti ? (data.apprenti.prenom + ' ' + data.apprenti.nom) : 'Apprenti en attente';
         var lien = window.location.origin + window.location.pathname + '?id=' + d.id;
         var waBtn = '';
@@ -423,7 +423,7 @@
       + 'Nouveau dossier d\'apprentissage — ' + (d.ref || '') + '\n\n'
       + '— ENTREPRISE —\n'
       + 'Raison sociale : ' + e.nom + '\n'
-      + 'Gérant : ' + e.gerant + '\n'
+      + 'Tuteur d\'apprentissage : ' + e.tuteur + '\n'
       + 'SIRET : ' + e.siret + '\n'
       + 'Email : ' + e.mail + '\n'
       + 'WhatsApp : ' + e.tel + '\n\n'
@@ -532,12 +532,12 @@
     var html = '<div class="summary-label-small">' + (type === 'entreprise' ? '🏢 Entreprise (déjà rempli)' : '🎓 Apprenti(e) (déjà rempli)') + '</div>';
     if (type === 'entreprise') {
       html += '<div class="locked-row"><span class="lk">Entreprise</span><span class="lv">' + data.nom + '</span></div>';
-      html += '<div class="locked-row"><span class="lk">Gérant</span><span class="lv">' + data.gerant + '</span></div>';
+      html += '<div class="locked-row"><span class="lk">Tuteur d\'apprentissage</span><span class="lv">' + data.tuteur + '</span></div>';
       html += '<div class="locked-row"><span class="lk">SIRET</span><span class="lv">' + data.siret + '</span></div>';
       html += '<div class="locked-row"><span class="lk">WhatsApp</span><span class="lv">' + data.tel + '</span></div>';
       html += '<div class="locked-row"><span class="lk">Mail</span><span class="lv">' + data.mail + '</span></div>';
       if (data.debut) html += '<div class="locked-row"><span class="lk">Début souhaité</span><span class="lv">' + formatDate(data.debut) + '</span></div>';
-      document.getElementById('hint-complete').textContent = '✅ ' + data.gerant + ' (' + data.nom + ') a rempli sa partie. Complétez la vôtre !';
+      document.getElementById('hint-complete').textContent = '✅ ' + data.tuteur + ' (' + data.nom + ') a rempli sa partie. Complétez la vôtre !';
     } else {
       html += '<div class="locked-row"><span class="lk">Nom</span><span class="lv">' + data.prenom + ' ' + data.nom + '</span></div>';
       html += '<div class="locked-row"><span class="lk">Naissance</span><span class="lv">' + formatDate(data.dob) + '</span></div>';
@@ -551,14 +551,14 @@
   }
 
   window.validerEntreprise = async function() {
-    var ids = ['e-nom','e-gerant-nom','e-gerant-prenom','e-siret','e-tel','e-mail'];
+    var ids = ['e-nom','e-tuteur-nom','e-tuteur-prenom','e-siret','e-tel','e-mail'];
     for (var i = 0; i < ids.length; i++) { if (!document.getElementById(ids[i]).value.trim()) { showToast('Merci de remplir tous les champs', '#e07d2a'); return; } }
 
     var data = {
       nom: document.getElementById('e-nom').value.trim(),
-      gerantNom: document.getElementById('e-gerant-nom').value.trim(),
-      gerantPrenom: document.getElementById('e-gerant-prenom').value.trim(),
-      gerant: document.getElementById('e-gerant-prenom').value.trim() + ' ' + document.getElementById('e-gerant-nom').value.trim(),
+      tuteurNom: document.getElementById('e-tuteur-nom').value.trim(),
+      tuteurPrenom: document.getElementById('e-tuteur-prenom').value.trim(),
+      tuteur: document.getElementById('e-tuteur-prenom').value.trim() + ' ' + document.getElementById('e-tuteur-nom').value.trim(),
       siret: document.getElementById('e-siret').value.trim(),
       tel: document.getElementById('e-tel').value.trim(),
       mail: document.getElementById('e-mail').value.trim(),
@@ -608,12 +608,12 @@
     var apporteur = document.getElementById('apporteur').value;
     var aNomComplet = apprentiData.prenom + ' ' + apprentiData.nom;
 
-    document.getElementById('duo-text').innerHTML = '<span>' + entrepriseData.gerant + '</span> (' + entrepriseData.nom + ')<br>recrute <span>' + aNomComplet + '</span> en <span>' + apprentiData.formation + '</span>';
+    document.getElementById('duo-text').innerHTML = '<span>' + entrepriseData.tuteur + '</span> (' + entrepriseData.nom + ')<br>recrute <span>' + aNomComplet + '</span> en <span>' + apprentiData.formation + '</span>';
     document.getElementById('s-ref').textContent = currentRef;
     document.getElementById('s-apporteur').textContent = apporteur;
     document.getElementById('s-date').textContent = dateStr;
     document.getElementById('s-e-nom').textContent = entrepriseData.nom;
-    document.getElementById('s-e-gerant').textContent = entrepriseData.gerant;
+    document.getElementById('s-e-tuteur').textContent = entrepriseData.tuteur;
     document.getElementById('s-e-siret').textContent = entrepriseData.siret;
     document.getElementById('s-e-tel').textContent = entrepriseData.tel;
     document.getElementById('s-e-mail').textContent = entrepriseData.mail;
@@ -643,7 +643,7 @@
       'Apporteur : ' + document.getElementById('s-apporteur').textContent + '\n\n' +
       'ENTREPRISE\n' +
       'Entreprise : ' + document.getElementById('s-e-nom').textContent + '\n' +
-      'Gérant : ' + document.getElementById('s-e-gerant').textContent + '\n' +
+      'Tuteur d\'apprentissage : ' + document.getElementById('s-e-tuteur').textContent + '\n' +
       'SIRET : ' + document.getElementById('s-e-siret').textContent + '\n' +
       'WhatsApp : ' + document.getElementById('s-e-tel').textContent + '\n' +
       'Mail : ' + document.getElementById('s-e-mail').textContent + '\n' +
@@ -678,7 +678,7 @@
       date: document.getElementById('s-date').textContent,
       apporteur: document.getElementById('s-apporteur').textContent,
       entreprise: document.getElementById('s-e-nom').textContent,
-      gerant: document.getElementById('s-e-gerant').textContent,
+      tuteur: document.getElementById('s-e-tuteur').textContent,
       siret: document.getElementById('s-e-siret').textContent,
       e_tel: document.getElementById('s-e-tel').textContent,
       e_mail: document.getElementById('s-e-mail').textContent,
@@ -696,7 +696,7 @@
       + 'Je vous transmets un nouveau dossier d\'apprentissage pour lequel j\'ai mis en relation un employeur et un(e) apprenti(e). Les deux parties ont rempli leur dossier ci-dessous :\n\n'
       + '— ENTREPRISE —\n'
       + 'Raison sociale : ' + d.entreprise + '\n'
-      + 'Gérant : ' + d.gerant + '\n'
+      + 'Tuteur d\'apprentissage : ' + d.tuteur + '\n'
       + 'SIRET : ' + d.siret + '\n'
       + 'Email : ' + d.e_mail + '\n'
       + 'WhatsApp : ' + d.e_tel + '\n\n'
@@ -719,7 +719,7 @@
     });
 
     // 2. Mail au patron
-    var msgPatron = 'Bonjour ' + d.gerant + ',\n\n'
+    var msgPatron = 'Bonjour ' + d.tuteur + ',\n\n'
       + 'Merci d\'avoir validé votre dossier d\'apprentissage avec ' + d.apprenti + '.\n\n'
       + 'Prochaines étapes :\n\n'
       + '1. Préparez votre CV (à fournir au centre de formation).\n'
